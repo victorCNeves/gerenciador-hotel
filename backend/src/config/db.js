@@ -20,3 +20,5 @@ db.Cliente.hasMany(db.Reserva, {foreignKey: 'id_cliente', onDelete: 'CASCADE', o
 db.Reserva.belongsTo(db.Cliente);
 db.Quarto.hasMany(db.Reserva, {foreignKey: 'id_quarto', onDelete: 'CASCADE', onUpdate: 'CASCADE'});
 db.Reserva.belongsTo(db.Quarto);
+
+module.exports = db;
