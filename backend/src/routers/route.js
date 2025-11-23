@@ -15,7 +15,7 @@ const router = express.Router();
 db.sequelize.sync({force: true}).then(() => {
     console.log('{ force: true }');
 });*/
-//db.Usuario.create({login:'admin', senha:'1234', tipo:2});
+//db.Usuario.create({login:'admin', senha:'1234', tipo:USER_TYPES.ADMIN, nome:'Administrador'});
 
 router.post('/login', authController.login)
 
