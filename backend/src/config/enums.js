@@ -1,0 +1,18 @@
+module.exports = {
+
+    USER_TYPES: {
+        VALUES: ['ADMIN', 'FUNCIONARIO', 'CLIENTE'],
+        ADMIN: 'ADMIN',
+        FUNCIONARIO: 'FUNCIONARIO',
+        CLIENTE: 'CLIENTE'
+    },
+
+    RESERVATION_STATUS:{
+        VALUES: ['CONFIRMADA','PENDENTE','CANCELADA','CONCLUIDA'],
+        CONFIRMADA: 'CONFIRMADA',
+        PENDENTE: 'PENDENTE',
+        CANCELADA: 'CANCELADA',
+        CONCLUIDA: 'CONCLUIDA'
+    }
+    
+}
