@@ -11,7 +11,7 @@ const auth = require('../controllers/auth');
 
 const router = express.Router();
 
-/*const db = require('../config/db_sequelize');
+/*const db = require('../config/db');
 db.sequelize.sync({force: true}).then(() => {
     console.log('{ force: true }');
 });*/
