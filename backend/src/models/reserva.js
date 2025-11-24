@@ -1,4 +1,4 @@
-const { RESERVATIONS_STATUS } = require('../config/enums');
+const { RESERVATION_STATUS } = require('../config/enums');
 
 module.exports = (sequelize, Sequelize)=>{
     const Reserva = sequelize.define("reserva", {
@@ -28,8 +28,8 @@ module.exports = (sequelize, Sequelize)=>{
         },
         status: {
             type: Sequelize.ENUM,
-            values: RESERVATIONS_STATUS.VALUES,
-            defaultValue: RESERVATIONS_STATUS.PENDENTE
+            values: RESERVATION_STATUS.VALUES,
+            defaultValue: RESERVATION_STATUS.PENDENTE
         }
     });
     return Reserva;
