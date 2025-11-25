@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
+const bcrypt = require('bcrypt');
 const secretKey = 'your_secret_key';
 
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Usuário não encontrado' });
             }
 
-            if (senha != usuario.senha) {
+            if (bcrypt.compareSync(senha, usuario.senha)) {
                 return res.status(401).json({ error: 'Senha incorreta' });
             }
 
