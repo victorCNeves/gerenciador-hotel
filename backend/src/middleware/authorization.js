@@ -9,7 +9,7 @@ module.exports = {
             'GUEST': 0
         }
         
-        req.user = req.user ? req.user.role : 'GUEST';
+        req.user.tipo = req.user ? req.user.tipo : 'GUEST';
 
         if (hierarquia[req.user.tipo] >= hierarquia[authorization]){
             next();
