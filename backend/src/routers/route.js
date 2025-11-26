@@ -31,8 +31,8 @@ router.post('/clientes', authToken, authorization(USER_TYPES.FUNCIONARIO), clien
 router.put('/clientes/:id', authToken, authorization(USER_TYPES.CLIENTE), clienteController.putCliente);
 router.delete('/clientes/:id', authToken, authorization(USER_TYPES.CLIENTE), clienteController.deleteCliente);
 
-router.get('/quartos', authToken, quartoController.getQuartos);
-router.get('/quartos/:id', authToken, quartoController.getQuartoById);
+router.get('/quartos', quartoController.getQuartos);
+router.get('/quartos/:id', quartoController.getQuartoById);
 router.post('/quartos', authToken, authorization(USER_TYPES.FUNCIONARIO), quartoController.postQuarto);
 router.put('/quartos/:id', authToken, authorization(USER_TYPES.FUNCIONARIO), quartoController.putQuarto);
 router.delete('/quartos/:id', authToken, authorization(USER_TYPES.FUNCIONARIO), quartoController.deleteQuarto);
