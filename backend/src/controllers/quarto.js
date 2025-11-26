@@ -4,6 +4,8 @@ const { RESERVATION_STATUS } = require('../config/enums');
 module.exports = {
     async postQuarto(req, res){
         try{
+            const {preco} = req.body;
+            if(preco<0) return res.status(400).json({error: "O valor nao pode ser negativo"});
             const quarto = await db.Quarto.create(req.body);
             res.status(201).json(quarto.toJSON());
         }catch(err){
@@ -46,6 +48,8 @@ module.exports = {
 
     async putQuarto(req, res){
         try{
+            const {preco} = req.body;
+            if(preco<0) return res.status(400).json({error: "O valor nao pode ser negativo"});
             const [linhas, [updatedQuarto]] = await db.Quarto.update(req.body, {where: {id: req.params.id}, returning: true});
             if(linhas>0 && updatedQuarto){
                 res.status(200).json(updatedQuarto.toJSON());

@@ -3,6 +3,8 @@ const db = require('../config/db');
 module.exports = {
     async postReserva(req, res){
         try {
+            const {valor_total} = req.body;
+            if (valor_total<0) return res.status(400).json({error: "O valor nao pode ser negativo"});
             const reserva = await db.Reserva.create(req.body);
             res.status(201).json(reserva.toJSON());
         } catch (err) {
@@ -45,6 +47,8 @@ module.exports = {
 
     async putReserva(req, res){
         try{
+            const {valor_total} = req.body;
+            if (valor_total<0) return res.status(400).json({error: "O valor nao pode ser negativo"});
             const [linhas, [updatedReserva]] = await db.Reserva.update(req.body, {where: {id: req.params.id}, returning: true});
             if(linhas>0 && updatedReserva){
                 res.status(200).json(updatedReserva.toJSON());
