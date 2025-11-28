@@ -1,10 +1,22 @@
 const db = require('../config/db');
+const { USER_TYPES } = require('../config/enums');
 
 module.exports = {
     async postReserva(req, res){
         try {
-            const {valor_total} = req.body;
-            if (valor_total<0) return res.status(400).json({error: "O valor nao pode ser negativo"});
+            const {id_usuario, id_quarto, data_checkin, data_checkout} = req.body;
+
+            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_usuario) return res.status(403).json({error: "Permissão negada"});
+            if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
+
+            const usuario = db.Usuario.findByPk(id_usuario, {raw: true});
+            if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
+
+            const quarto = db.Quarto.findByPk(id_quarto, {raw: true});
+            if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});
+
+            req.body.valor_total = calcularDiarias(data_checkin, data_checkout) * quarto.preco;
+
             const reserva = await db.Reserva.create(req.body);
             res.status(201).json(reserva.toJSON());
         } catch (err) {
@@ -74,4 +86,18 @@ module.exports = {
             res.status(500).json({error: "Erro ao deletar reserva"});
         }
     }
+}
+
+function calcularDiarias(data_checkin, data_checkout){
+    const msDia = 24*60*60*1000;
+    const checkinDia = new Date(data_checkin.getTime()).setHours(0,0,0,0);
+    const checkoutDia = new Date(data_checkout.getTime()).setHours(0,0,0,0);
+    const checkoutHora = data_checkout.getHours();
+    const checkoutMinuto = data_checkout.getMinutes();
+
+    let dias = Math.floor((checkoutDia - checkinDia) / msDia);
+
+    if (checkoutHora > 12 || (checkoutHora === 12 && checkoutMinuto > 0)) return dias + 1;
+    
+    return dias > 0 ? dias : 1;
 }
