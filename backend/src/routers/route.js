@@ -8,6 +8,7 @@ const authController = require('../controllers/auth');
 const authToken = require('../middleware/auth-token');
 const { authorization } = require('../middleware/authorization');
 const { USER_TYPES } = require('../config/enums');
+// const { preencher } = require('../dadosBd');
 
 const router = express.Router();
 
@@ -16,6 +17,8 @@ db.sequelize.sync({force: true}).then(() => {
     console.log('{ force: true }');
 });*/
 //db.Usuario.create({login:'admin', senha:'1234', tipo:USER_TYPES.ADMIN, nome:'Administrador'});
+
+// router.get('/preencher', preencher);
 
 router.post('/login', authController.login)
 
