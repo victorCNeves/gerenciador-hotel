@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const { USER_TYPES } = require('../config/enums');
+const { Op } = require('sequelize');
 
 module.exports = {
     async postReserva(req, res){
@@ -14,6 +15,18 @@ module.exports = {
 
             const quarto = db.Quarto.findByPk(id_quarto, {raw: true});
             if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});
+
+            const reservas = await db.Reserva.findOne({
+              where: {
+                id_quarto: id_quarto,
+                [Op.and]: [
+                  { data_checkin: {[Op.lt]: data_checkout}},
+                  { data_checkout: {[Op.gt]: data_checkin}}
+                ]
+              }
+            });
+
+            if (reservas != null) return res.status(400).json({error: "Quarto indisponivel"});
 
             req.body.valor_total = calcularDiarias(data_checkin, data_checkout) * quarto.preco;
 
@@ -59,8 +72,30 @@ module.exports = {
 
     async putReserva(req, res){
         try{
-            const {valor_total} = req.body;
-            if (valor_total<0) return res.status(400).json({error: "O valor nao pode ser negativo"});
+            const {id_usuario, id_quarto, data_checkin, data_checkout} = req.body;
+
+            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_usuario) return res.status(403).json({error: "Permissão negada"});
+            if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
+
+            const usuario = db.Usuario.findByPk(id_usuario, {raw: true});
+            if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
+
+            const quarto = db.Quarto.findByPk(id_quarto, {raw: true});
+            if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});
+
+            const reservas = await db.Reserva.findOne({
+              where: {
+                id_quarto: id_quarto,
+                [Op.and]: [
+                  { data_checkin: {[Op.lt]: data_checkout}},
+                  { data_checkout: {[Op.gt]: data_checkin}}
+                ]
+              }
+            });
+
+            if (reservas != null) return res.status(400).json({error: "Quarto indisponivel"});
+
+            req.body.valor_total = calcularDiarias(data_checkin, data_checkout) * quarto.preco;
             const [linhas, [updatedReserva]] = await db.Reserva.update(req.body, {where: {id: req.params.id}, returning: true});
             if(linhas>0 && updatedReserva){
                 res.status(200).json(updatedReserva.toJSON());
