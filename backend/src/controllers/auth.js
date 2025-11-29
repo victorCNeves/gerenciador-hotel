@@ -13,7 +13,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Usuário não encontrado' });
             }
 
-            if (bcrypt.compareSync(senha, usuario.senha)) {
+            if (!bcrypt.compareSync(senha, usuario.senha)) {
                 return res.status(401).json({ error: 'Senha incorreta' });
             }
 
