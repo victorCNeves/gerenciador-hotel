@@ -5,15 +5,15 @@ const { Op } = require('sequelize');
 module.exports = {
     async postReserva(req, res){
         try {
-            const {id_usuario, id_quarto, data_checkin, data_checkout} = req.body;
+            const {id_cliente, id_quarto, data_checkin, data_checkout} = req.body;
 
-            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_usuario) return res.status(403).json({error: "Permissão negada"});
+            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_cliente) return res.status(403).json({error: "Permissão negada"});
             if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
 
-            const usuario = db.Usuario.findByPk(id_usuario, {raw: true});
+            const usuario = await db.Usuario.findByPk(id_cliente, {raw: true});
             if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
 
-            const quarto = db.Quarto.findByPk(id_quarto, {raw: true});
+            const quarto = await db.Quarto.findByPk(id_quarto, {raw: true});
             if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});
 
             const reservas = await db.Reserva.findOne({
@@ -72,12 +72,12 @@ module.exports = {
 
     async putReserva(req, res){
         try{
-            const {id_usuario, id_quarto, data_checkin, data_checkout} = req.body;
+            const {id_cliente, id_quarto, data_checkin, data_checkout} = req.body;
 
-            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_usuario) return res.status(403).json({error: "Permissão negada"});
+            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_cliente) return res.status(403).json({error: "Permissão negada"});
             if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
 
-            const usuario = db.Usuario.findByPk(id_usuario, {raw: true});
+            const usuario = db.Usuario.findByPk(id_cliente, {raw: true});
             if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
 
             const quarto = db.Quarto.findByPk(id_quarto, {raw: true});
@@ -125,6 +125,8 @@ module.exports = {
 
 function calcularDiarias(data_checkin, data_checkout){
     const msDia = 24*60*60*1000;
+    data_checkin = new Date(data_checkin);
+    data_checkout = new Date(data_checkout);
     const checkinDia = new Date(data_checkin.getTime()).setHours(0,0,0,0);
     const checkoutDia = new Date(data_checkout.getTime()).setHours(0,0,0,0);
     const checkoutHora = data_checkout.getHours();
