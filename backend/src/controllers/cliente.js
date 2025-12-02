@@ -1,5 +1,6 @@
 const { where } = require('sequelize');
 const db = require('../config/db');
+const { RESERVATION_STATUS } = require('../config/enums');
 
 module.exports = { 
     async postCliente(req, res){
