@@ -1,4 +1,3 @@
-const { where } = require('sequelize');
 const db = require('../config/db');
 const { RESERVATION_STATUS } = require('../config/enums');
 
