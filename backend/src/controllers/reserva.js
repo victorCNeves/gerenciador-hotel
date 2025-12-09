@@ -80,15 +80,16 @@ module.exports = {
             if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_cliente) return res.status(403).json({error: "Permissão negada"});
             if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
 
-            const usuario = db.Usuario.findByPk(id_cliente, {raw: true});
+            const usuario = await db.Usuario.findByPk(id_cliente, {raw: true});
             if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
 
-            const quarto = db.Quarto.findByPk(id_quarto, {raw: true});
+            const quarto = await db.Quarto.findByPk(id_quarto, {raw: true});
             if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});
 
             const reservas = await db.Reserva.findOne({
               where: {
                 id_quarto: id_quarto,
+                id: {[Op.ne]: req.params.id},
                 [Op.and]: [
                   { data_checkin: {[Op.lt]: data_checkout}},
                   { data_checkout: {[Op.gt]: data_checkin}}
