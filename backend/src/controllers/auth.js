@@ -18,7 +18,7 @@ module.exports = {
             }
 
             const token = generateToken(usuario);
-            res.status(200).json({ token });
+            res.status(200).json({ token, usuario: { id: usuario.id, tipo: usuario.tipo } });
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: 'Erro ao fazer login' });

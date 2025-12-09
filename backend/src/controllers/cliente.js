@@ -15,7 +15,6 @@ module.exports = {
     async getClientes(req, res){
         try{
             const options = {};
-            if(req.user.tipo==USER_TYPES.CLIENTE) options.where = {id: req.user.id};
             if(req.query.include==='true'){
                 options.include = [{model: db.Reserva, as: 'reservas', where: {status: RESERVATION_STATUS.CONFIRMADA}, required: false}];
             }
