@@ -7,11 +7,11 @@ module.exports = {
         try {
             const {id_cliente, id_quarto, data_checkin, data_checkout} = req.body;
 
-            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_cliente) return res.status(403).json({error: "Permissão negada"});
             if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
-
+            
             const usuario = await db.Usuario.findByPk(id_cliente, {raw: true});
             if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
+            if (req.user.tipo == USER_TYPES.CLIENTE) req.body.id_cliente = req.user.id;
 
             const quarto = await db.Quarto.findByPk(id_quarto, {raw: true});
             if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});
