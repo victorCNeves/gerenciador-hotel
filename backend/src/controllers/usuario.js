@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
+const { USER_TYPES } = require('../config/enums');
 
 module.exports = {
     async postUser(req, res){
@@ -26,6 +27,7 @@ module.exports = {
 
     async getUsersById(req, res){
         try {
+            if(req.user.tipo==USER_TYPES.CLIENTE && req.user.id != req.params.id) return res.status(403).json({error: "Permissão negada"});
             const user = await db.Usuario.findByPk(req.params.id, {raw: true});
             if(user){
                 res.status(200).json(user);

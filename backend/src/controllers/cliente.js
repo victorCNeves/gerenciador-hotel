@@ -1,5 +1,5 @@
 const db = require('../config/db');
-const { RESERVATION_STATUS } = require('../config/enums');
+const { RESERVATION_STATUS, USER_TYPES } = require('../config/enums');
 
 module.exports = { 
     async postCliente(req, res){
@@ -15,6 +15,7 @@ module.exports = {
     async getClientes(req, res){
         try{
             const options = {};
+            if(req.user.tipo==USER_TYPES.CLIENTE) options.where = {id: req.user.id};
             if(req.query.include==='true'){
                 options.include = [{model: db.Reserva, as: 'reservas', where: {status: RESERVATION_STATUS.CONFIRMADA}, required: false}];
             }
@@ -32,9 +33,11 @@ module.exports = {
             if(req.query.include==='true'){
                 options.include = [{model: db.Reserva, as: 'reservas'}];
             }
-            const cliente = await db.Cliente.findByPk(req.params.id, options);
+            let cliente = await db.Cliente.findByPk(req.params.id, options);
             if(cliente){
-                res.status(200).json(cliente.toJSON());
+                cliente = cliente.toJSON();
+                if(req.user.tipo==USER_TYPES.CLIENTE && req.user.id != cliente.id_usuario) return res.status(403).json({error: "Permissão negada"});
+                res.status(200).json(cliente);
             }else{
                 res.status(404).json({error: "Cliente nao encontrado"});
             }

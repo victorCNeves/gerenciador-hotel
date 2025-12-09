@@ -41,6 +41,7 @@ module.exports = {
     async getReservas(req, res){
         try {
             const options = {};
+            if (req.user.tipo==USER_TYPES.CLIENTE) options.where = {id_cliente: req.user.id};
             if (req.query.include==='true'){
                 options.include = [{model: db.Cliente, as: 'cliente'}, {model: db.Quarto, as: 'quarto'}];
             }
@@ -58,9 +59,11 @@ module.exports = {
             if (req.query.include==='true'){
                 options.include = [{model: db.Cliente, as: 'cliente'}, {model: db.Quarto, as: 'quarto'}];
             }
-            const reserva = await db.Reserva.findByPk(req.params.id, options);
+            let reserva = await db.Reserva.findByPk(req.params.id, options);
             if(reserva){
-                res.status(200).json(reserva.toJSON());
+                reserva = reserva.toJSON();
+                if (req.user.tipo==USER_TYPES.CLIENTE && req.user.id != reserva.cliente.id_usuario) return res.status(403).json({error: "Permissão negada"});
+                res.status(200).json(reserva);
             }else{
                 res.status(404).json({error: "Reserva nao encontrada"});
             }
