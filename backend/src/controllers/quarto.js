@@ -32,7 +32,7 @@ module.exports = {
         try {
             const options = {}
             if(req.query.include==='true'){
-                options.include = [{model: db.Reserva, as: 'reservas', required: false}];
+                options.include = [{model: db.Reserva, as: 'reservas', include: [{model: db.Cliente, as: 'cliente'}], required: false}];
             }
             const quarto = await db.Quarto.findByPk(req.params.id, options);
             if(quarto){
