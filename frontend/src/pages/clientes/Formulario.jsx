@@ -14,6 +14,7 @@ function FormCliente() {
     const { id } = useParams();
     const navigate = useNavigate();
     const isEdit = !!id;
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
 
     const [cpf, setCpf] = useState('');
     const [nome, setNome] = useState('');
@@ -71,7 +72,12 @@ function FormCliente() {
         try {
             await api[method](url, clienteData);
             toast.success(isEdit ? 'Cliente atualizado!' : 'Cliente cadastrado!');
-            navigate("/clientes");
+            if(usuario.permissao >=3){
+                navigate("/clientes");
+            }
+            if(usuario.permissao === 1){
+                navigate("/");
+            }
         } catch (err) {
             console.log(err);
             toast.error(err.message || "Erro ao salvar cliente.");
