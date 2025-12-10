@@ -166,7 +166,7 @@ function ViewCliente() {
                                         <Button 
                                             variant="outline-primary" 
                                             size="sm" 
-                                            onClick={() => navigate(`/reservas/editar/${reserva.id}`)}
+                                            onClick={() => navigate(`/reservas/${reserva.id}`)}
                                         >
                                             Ver
                                         </Button>
