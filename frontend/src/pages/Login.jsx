@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
-import api from "../../api";
+import api from "../api";
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';

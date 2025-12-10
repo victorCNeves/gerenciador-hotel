@@ -17,8 +17,12 @@ module.exports = {
                 return res.status(401).json({ error: 'Senha incorreta' });
             }
 
+            const cliente = await db.Cliente.findOne({where: {id_usuario: usuario.id}, raw: true});
+            usuario.id_cliente = (cliente) ? cliente.id : null;
+
             const token = generateToken(usuario);
-            res.status(200).json({ token, usuario: { id: usuario.id, tipo: usuario.tipo } });
+
+            res.status(200).json({ token, usuario: { id: usuario.id, tipo: usuario.tipo , nome: usuario.nome, id_cliente: usuario.id_cliente } });
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: 'Erro ao fazer login' });
@@ -29,7 +33,8 @@ module.exports = {
 function generateToken(usuario) {
     const payload = {
         id: usuario.id,
-        tipo: usuario.tipo
+        tipo: usuario.tipo,
+        id_cliente: usuario.id_cliente
     };
 
     const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });

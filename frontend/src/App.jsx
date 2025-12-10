@@ -3,10 +3,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PrivateRoute from "./components/PrivateRoute";
 import Container from 'react-bootstrap/Container';
-import Menu from "./Menu";
-import Rodape from "./Rodape";
-import Home from "./Home";
-import Login from "./Login";
+import Menu from "./layout/Menu";
+import Rodape from "./layout/Rodape";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
 
 import ListClientes from "./pages/clientes/List";
 import FormCliente from "./pages/clientes/Formulario";

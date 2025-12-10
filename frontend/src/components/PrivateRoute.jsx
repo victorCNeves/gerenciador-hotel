@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 function PrivateRoute({nivel=1}){
     const token = localStorage.getItem('token');

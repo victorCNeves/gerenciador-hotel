@@ -75,7 +75,7 @@ function ViewUsuario() {
             <Card className="shadow-sm border-0">
                 <Card.Header className="bg-white border-bottom-0 d-flex justify-content-between align-items-center pt-3 px-4">
                     <div className="d-flex align-items-center gap-3">
-                        <h2 className="mb-0 text-primary">{usuario.nome}</h2>
+                        <h2 className="mb-0 text-primary">{usuario.login}</h2>
                         <Badge bg={getBadgeVariant(usuario.tipo)} className="fs-6">
                             {usuario.tipo}
                         </Badge>
@@ -115,12 +115,12 @@ function ViewUsuario() {
                             variant="warning" 
                             onClick={() => navigate(`/usuarios/editar/${usuario.id}`)}
                         >
-                            ✏️ Editar Dados / Trocar Senha
+                            ✏️ Editar
                         </Button>
 
                         {permissaoLogado === 3 && usuario.id !== usuarioLogado.id && (
                             <Button variant="danger" onClick={handleDelete}>
-                                🗑️ Revogar Acesso (Excluir)
+                                🗑️ Excluir
                             </Button>
                         )}
                     </div>

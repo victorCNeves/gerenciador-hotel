@@ -19,7 +19,6 @@ function ListUsuarios() {
         const buscarUsuarios = async () => {
             try {
                 const data = await api.get('/usuarios');
-                // Ordena por ID
                 const ordenados = data.sort((a, b) => a.id - b.id);
                 setUsuarios(ordenados);
             } catch (err) {

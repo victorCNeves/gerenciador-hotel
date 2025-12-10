@@ -5,13 +5,13 @@ const { Op } = require('sequelize');
 module.exports = {
     async postReserva(req, res){
         try {
+            if (req.user.tipo == USER_TYPES.CLIENTE) req.body.id_cliente = req.user.id_cliente;
             const {id_cliente, id_quarto, data_checkin, data_checkout} = req.body;
 
             if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
             
-            const usuario = await db.Usuario.findByPk(id_cliente, {raw: true});
-            if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
-            if (req.user.tipo == USER_TYPES.CLIENTE) req.body.id_cliente = req.user.id;
+            const cliente = await db.Cliente.findByPk(id_cliente, {raw: true});
+            if (!cliente) return res.status(404).json({error: "Usuário nao encontrado"});
 
             const quarto = await db.Quarto.findByPk(id_quarto, {raw: true});
             if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});
@@ -41,10 +41,11 @@ module.exports = {
     async getReservas(req, res){
         try {
             const options = {};
-            if (req.user.tipo==USER_TYPES.CLIENTE) options.where = {id_cliente: req.user.id};
+            if (req.user.tipo==USER_TYPES.CLIENTE) options.where = {id_cliente: req.user.id_cliente};
             if (req.query.include==='true'){
                 options.include = [{model: db.Cliente, as: 'cliente'}, {model: db.Quarto, as: 'quarto'}];
             }
+            console.log(options);
             const reservas = await db.Reserva.findAll(options);
             res.status(200).json(reservas.map(r=>(r.toJSON())));
         } catch (err) {
@@ -77,11 +78,11 @@ module.exports = {
         try{
             const {id_cliente, id_quarto, data_checkin, data_checkout} = req.body;
 
-            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id != id_cliente) return res.status(403).json({error: "Permissão negada"});
+            if (req.user.tipo == USER_TYPES.CLIENTE && req.user.id_cliente != id_cliente) return res.status(403).json({error: "Permissão negada"});
             if (data_checkout < data_checkin) return res.status(400).json({error: "A data de checkout não pode ser anterior à data de checkin"});
 
-            const usuario = await db.Usuario.findByPk(id_cliente, {raw: true});
-            if (!usuario) return res.status(404).json({error: "Usuário nao encontrado"});
+            const cliente = await db.Cliente.findByPk(id_cliente, {raw: true});
+            if (!cliente) return res.status(404).json({error: "Usuário nao encontrado"});
 
             const quarto = await db.Quarto.findByPk(id_quarto, {raw: true});
             if (!quarto) return res.status(404).json({error: "Quarto nao encontrado"});

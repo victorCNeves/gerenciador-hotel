@@ -3,9 +3,11 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import api from '../api';
 
 function Menu() {
-    const navigate = useNavigate();
     const usuarioString = localStorage.getItem('usuario');
     const usuario = usuarioString ? JSON.parse(usuarioString) : null;
     const permissao = usuario ? usuario.permissao : 0;
@@ -13,13 +15,13 @@ function Menu() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('usuario');
-        window.location.href = '/login';
+        window.location.href = '/login'; 
     };
 
     return (
         <Navbar bg="dark" data-bs-theme="dark" expand="lg" className="mb-4">
             <Container>
-                <Navbar.Brand as={Link} to="/">Hotel System</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/">Hotel</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
@@ -28,22 +30,29 @@ function Menu() {
                         <NavDropdown title="Quartos" id="nav-quartos">
                             <NavDropdown.Item as={Link} to="/quartos">Ver Quartos Disponíveis</NavDropdown.Item>
                             {usuario && permissao >= 2 && (
-                                <>
-                                    <NavDropdown.Divider />
-                                    <NavDropdown.Item as={Link} to="/quartos/novo">Cadastrar Quarto</NavDropdown.Item>
-                                </>
+                                <NavDropdown.Item as={Link} to="/quartos/novo">Cadastrar Quarto</NavDropdown.Item>
                             )}
                         </NavDropdown>
 
                         {usuario && permissao >= 2 && (
                             <NavDropdown title="Clientes" id="nav-clientes">
                                 <NavDropdown.Item as={Link} to="/clientes">Gerenciar Clientes</NavDropdown.Item>
-                                <NavDropdown.Item as={Link} to="/clientes/novo">Cadastrar Novo</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/clientes/novo">Novo Cliente</NavDropdown.Item>
                             </NavDropdown>
                         )}
-                         
+
                         {usuario && permissao === 1 && (
-                             <Nav.Link as={Link} to={`/clientes/${usuario.id}`}>Meus Dados</Nav.Link>
+                            <NavDropdown title="Meus Dados" id="nav-meus-dados">
+                                <NavDropdown.Item as={Link} to={`/usuarios/${usuario.id}`}>
+                                    Perfil de Usuário
+                                </NavDropdown.Item>
+
+                                {usuario.id_cliente && (
+                                    <NavDropdown.Item as={Link} to={`/clientes/${usuario.id_cliente}`}>
+                                        Perfil de Cliente
+                                    </NavDropdown.Item>
+                                )}
+                            </NavDropdown>
                         )}
 
                         {usuario && (
@@ -60,14 +69,14 @@ function Menu() {
                         {usuario && permissao === 3 && (
                             <NavDropdown title="Admin" id="nav-usuarios">
                                 <NavDropdown.Item as={Link} to="/usuarios">Gerenciar Usuários</NavDropdown.Item>
-                                <NavDropdown.Item as={Link} to="/usuarios/novo">Novo Funcionário</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/usuarios/novo">Novo Usuário</NavDropdown.Item>
                             </NavDropdown>
                         )}
                     </Nav>
 
                     <Nav>
                         {!usuario ? (
-                            <Nav.Link as={Link} to="/login">Entrar / Cadastrar</Nav.Link>
+                            <Nav.Link as={Link} to="/login">Entrar</Nav.Link>
                         ) : (
                             <NavDropdown title={`Olá, ${usuario.nome}`} id="nav-user" align="end">
                                 <NavDropdown.Item as={Link} to={`/usuarios/${usuario.id}`}>Meu Perfil</NavDropdown.Item>

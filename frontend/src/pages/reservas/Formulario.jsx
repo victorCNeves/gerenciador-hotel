@@ -32,6 +32,13 @@ function FormReserva() {
     const [diasCalculados, setDiasCalculados] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
 
+    const formatForInput = (isoString) => {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); 
+        return date.toISOString().slice(0, 16);
+    };
+
     useEffect(() => {
         const loadDependencies = async () => {
             try {
@@ -46,8 +53,8 @@ function FormReserva() {
                 if (isEdit) {
                     const reserva = await api.get(`/reservas/${id}`);
                     
-                    setDataCheckIn(reserva.data_checkin.slice(0, 16));
-                    setDataCheckOut(reserva.data_checkout.slice(0, 16));
+                    setDataCheckIn(formatForInput(reserva.data_checkin));
+                    setDataCheckOut(formatForInput(reserva.data_checkout));
                     setQuartoId(reserva.id_quarto); 
                     setClienteId(reserva.id_cliente);
                     setStatus(reserva.status);

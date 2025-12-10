@@ -43,7 +43,11 @@ module.exports = {
     async putUser(req, res){
         try{
             const {login, senha, nome, tipo} = req.body;
-            const temp = {login, nome, tipo, senha: await bcrypt.hash(senha, 10)};
+            const temp = {login, nome, tipo};
+            if(senha) {
+                req.body.senha = await bcrypt.hash(senha, 10);
+                temp.senha = req.body.senha;
+            }
             const [linhas, [updatedUser]] = await db.Usuario.update(temp, {where: {id: req.params.id}, returning: true});
             if(linhas>0 && updatedUser){
                 res.status(200).json(updatedUser.toJSON());
